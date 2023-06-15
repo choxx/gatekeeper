@@ -1,8 +1,7 @@
 export interface AppConfig {
-    host: string;
-    apiKey?: string;
-    encryption?: {
-        enabled: boolean;
-        key?: string;
-    }
+  name: string;
+  apiKey?: string;
+  adminSecret: string;
+  prometheusUrl: string;
+  systemThresholds: object[];
 }

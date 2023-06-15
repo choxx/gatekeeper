@@ -5,11 +5,12 @@ import {
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
-  IsObject, IsOptional,
+  IsObject,
+  IsOptional,
   IsString,
-  ValidateNested
-} from "class-validator";
-import { Type } from "class-transformer";
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum ERROR_TYPE {
   SERVER_UPGRADE = 'SERVER_UPGRADE',
@@ -27,7 +28,12 @@ export class ErrorDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  @IsIn([ERROR_TYPE.SERVER_UPGRADE, ERROR_TYPE.PERFORMANCE_DEGRADE, ERROR_TYPE.SYSTEM_OFFLINE, ERROR_TYPE.ACCESS_BLOCK])
+  @IsIn([
+    ERROR_TYPE.SERVER_UPGRADE,
+    ERROR_TYPE.PERFORMANCE_DEGRADE,
+    ERROR_TYPE.SYSTEM_OFFLINE,
+    ERROR_TYPE.ACCESS_BLOCK,
+  ])
   type: string;
 
   @IsDefined()
@@ -58,7 +64,6 @@ export class SystemDto {
   @ValidateNested()
   @Type(() => ErrorDto || null)
   error: ErrorDto | null;
-
 }
 
 export class ActorsDto {
@@ -92,5 +97,5 @@ export class UpdateConfigurationDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ActorsDto)
-  actors: ActorsDto[]
+  actors: ActorsDto[];
 }

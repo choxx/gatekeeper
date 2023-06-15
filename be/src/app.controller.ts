@@ -1,8 +1,15 @@
-import { Body, Controller, Get, Headers, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiKeyAuthGuard } from "./auth/guard/apikey-auth.guard";
-import { AdminSecretAuthGuard } from "./auth/guard/admin-secret-auth.guard";
-import { UpdateConfigurationDto } from "./dto/update-configuration.dto";
+import { ApiKeyAuthGuard } from './auth/guard/apikey-auth.guard';
+import { AdminSecretAuthGuard } from './auth/guard/admin-secret-auth.guard';
+import { UpdateConfigurationDto } from './dto/update-configuration.dto';
 
 @Controller()
 @UseGuards(ApiKeyAuthGuard)
@@ -15,9 +22,7 @@ export class AppController {
   }
 
   @Get('/gatekeeper')
-  getSystemStatus(
-    @Headers('x-application-id') applicationId: string,
-  ): object {
+  getSystemStatus(@Headers('x-application-id') applicationId: string): object {
     return this.appService.getSystemStatus(applicationId);
   }
 
@@ -25,7 +30,7 @@ export class AppController {
   @UseGuards(AdminSecretAuthGuard)
   updateConfiguration(
     @Headers('x-application-id') applicationId: string,
-    @Body() body: UpdateConfigurationDto
+    @Body() body: UpdateConfigurationDto,
   ): object {
     return this.appService.updateConfiguration(applicationId, body);
   }
