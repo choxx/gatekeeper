@@ -4,11 +4,16 @@ import { UpdateConfigurationDto } from "./dto/update-configuration.dto";
 
 @Injectable()
 export class AppService {
-  getSystemStatus(applicationId: string): object {
-    // TODO add caching
+  private configCache: object = {};
+
+  getSystemStatus(applicationId: string, refreshCache: boolean = false): object {
+    if (!refreshCache && this.configCache[applicationId]) {
+      return this.configCache[applicationId]; // return from cache
+    }
     const filePath = `configurations/${applicationId}.json`;
     if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      this.configCache[applicationId] = JSON.parse(fs.readFileSync(filePath, 'utf8'));  // add to cache
+      return this.configCache[applicationId];
     }
 
     // if file doesn't exist, we'll create a default one assuming system in UP
@@ -26,9 +31,8 @@ export class AppService {
   }
 
   updateConfiguration(applicationId: string, config: UpdateConfigurationDto): object {
-    // TODO update cache
     const filePath = `configurations/${applicationId}.json`;
     fs.writeFileSync(filePath, JSON.stringify(config));
-    return this.getSystemStatus(applicationId);
+    return this.getSystemStatus(applicationId, true);
   }
 }

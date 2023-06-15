@@ -29,7 +29,6 @@ export class ConfigResolverService {
     getApiKey(applicationId: string): string {
         applicationId = this.transform(applicationId);
         const config = this.configService.get<string>(applicationId);
-        console.log('111', applicationId, config)
         return config ? JSON.parse(config).apiKey || null : null;
     }
 
