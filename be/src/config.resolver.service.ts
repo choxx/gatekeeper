@@ -12,7 +12,7 @@ export class ConfigResolverService {
          * we'll replace "-" with "_" because docker-compose cannot load hyphens & we expect applicationId with underscore separator.
          * Also, we'll prefix <APP_> as the uuid may begin with integer & variables can't begin with numbers.
          */
-        return 'APP_' + applicationId.split("-").join("_");
+        return 'APP_' + applicationId.replace(/\./g, '_').split("-").join("_");
     }
 
     getConfigByApplicationId(applicationId: string): AppConfig {
@@ -29,6 +29,7 @@ export class ConfigResolverService {
     getApiKey(applicationId: string): string {
         applicationId = this.transform(applicationId);
         const config = this.configService.get<string>(applicationId);
+        console.log('111', applicationId, config)
         return config ? JSON.parse(config).apiKey || null : null;
     }
 
