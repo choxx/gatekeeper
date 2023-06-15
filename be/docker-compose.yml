@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    container_name: gatekeeper-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:3000
+    volumes:
+      - ./configurations:/app/configurations

@@ -6,13 +6,23 @@ import { AppConfig } from './api.interface';
 
 @Injectable()
 export class AppService {
+  private configCache: object = {};
+
   constructor(private readonly configService: ConfigService) {}
 
-  getSystemStatus(applicationId: string): UpdateConfigurationDto {
-    // TODO add caching
+  getSystemStatus(
+    applicationId: string,
+    refreshCache: boolean = false,
+  ): UpdateConfigurationDto {
+    if (!refreshCache && this.configCache[applicationId]) {
+      return this.configCache[applicationId]; // return from cache
+    }
     const filePath = `configurations/${applicationId}.json`;
     if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      this.configCache[applicationId] = JSON.parse(
+        fs.readFileSync(filePath, 'utf8'),
+      ); // add to cache
+      return this.configCache[applicationId];
     }
 
     // if file doesn't exist, we'll create a default one assuming system in UP
@@ -33,10 +43,9 @@ export class AppService {
     applicationId: string,
     config: UpdateConfigurationDto,
   ): object {
-    // TODO update cache
     const filePath = `configurations/${applicationId}.json`;
     fs.writeFileSync(filePath, JSON.stringify(config));
-    return this.getSystemStatus(applicationId);
+    return this.getSystemStatus(applicationId, true);
   }
 
   getAppConfig(appId): AppConfig {

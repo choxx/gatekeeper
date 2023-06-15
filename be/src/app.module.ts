@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './task.service';
 import { HttpModule } from '@nestjs/axios';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -14,9 +16,21 @@ import { HttpModule } from '@nestjs/axios';
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
     HttpModule,
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 100,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, ConfigResolverService, TasksService],
+  providers: [
+    AppService,
+    ConfigResolverService,
+    TasksService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
   exports: [AppService, ConfigResolverService],
 })
 export class AppModule {}
