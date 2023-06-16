@@ -8,6 +8,8 @@ import { AxiosResponse } from 'axios';
 import { ErrorDto } from './dto/update-configuration.dto';
 import { MonitoringResponseDto } from './dto/monitoring-response.dto';
 import { CronJob } from 'cron';
+import { GlobalService } from './global.service';
+import { ConfigResolverService } from './config.resolver.service';
 
 @Injectable()
 export class TasksService implements OnModuleInit {
@@ -18,6 +20,7 @@ export class TasksService implements OnModuleInit {
     private readonly appService: AppService,
     private readonly httpService: HttpService,
     private readonly schedulerRegistry: SchedulerRegistry,
+    private readonly configResolverService: ConfigResolverService,
   ) {}
 
   onModuleInit() {
@@ -31,16 +34,23 @@ export class TasksService implements OnModuleInit {
 
   getCpuUsage(appId: string): Observable<AxiosResponse<MonitoringResponseDto>> {
     return this.httpService.get(
-      this.appService.getAppConfig(appId)['prometheusUrl'],
+      this.configResolverService.getPrometheusUrl(appId),
     );
   }
 
   async handleCron() {
     this.logger.debug('CRON started');
 
-    const appIds = Object.keys(process.env)
-      .filter((env) => /APP_/.test(env))
-      .map((appId) => appId.toLowerCase().split('app_')[1]);
+    // check if request is already blocked
+    if (GlobalService.isConfigRequestBlocked) {
+      this.logger.warn('CRON skipped due to some else is requesting');
+      return 'SKIPPED';
+    }
+
+    // acquire lock
+    GlobalService.isConfigRequestBlocked = true;
+
+    const appIds = this.appService.getAppIds();
 
     for (const appId of appIds) {
       const response = await firstValueFrom(
@@ -53,7 +63,7 @@ export class TasksService implements OnModuleInit {
         return 'SKIPPED';
       }
 
-      const thresholds = this.appService.getAppConfig(appId).systemThresholds;
+      const thresholds = this.configResolverService.getSystemThresholds(appId);
       const threshold = <ErrorDto | undefined>thresholds
         .sort((prev: object, curr: object) => {
           return prev['threshold'] - curr['threshold'];
@@ -74,6 +84,9 @@ export class TasksService implements OnModuleInit {
 
       this.appService.updateConfiguration(appId, status);
     }
+
+    // release lock
+    GlobalService.isConfigRequestBlocked = false;
 
     this.logger.debug('CRON successfully executed');
 

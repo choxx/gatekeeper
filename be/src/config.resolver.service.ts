@@ -16,7 +16,8 @@ export class ConfigResolverService {
 
   getConfigByApplicationId(applicationId: string): AppConfig {
     applicationId = this.transform(applicationId);
-    return this.configService.get<AppConfig>(applicationId);
+    const config = this.configService.get(applicationId);
+    return JSON.parse(config);
   }
 
   getAppName(applicationId: string): string {
@@ -35,6 +36,18 @@ export class ConfigResolverService {
     applicationId = this.transform(applicationId);
     const config = this.configService.get<string>(applicationId);
     return config ? JSON.parse(config).adminSecret || null : null;
+  }
+
+  getPrometheusUrl(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).prometheusUrl || null : null;
+  }
+
+  getSystemThresholds(applicationId: string): object[] {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).systemThresholds || null : null;
   }
 
   /*getEncryptionStatus(applicationId: string): boolean {

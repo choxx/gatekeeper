@@ -12,7 +12,7 @@ export class AppService {
 
   getSystemStatus(
     applicationId: string,
-    refreshCache: boolean = false,
+    refreshCache = false,
   ): UpdateConfigurationDto {
     if (!refreshCache && this.configCache[applicationId]) {
       return this.configCache[applicationId]; // return from cache
@@ -48,7 +48,9 @@ export class AppService {
     return this.getSystemStatus(applicationId, true);
   }
 
-  getAppConfig(appId): AppConfig {
-    return JSON.parse(this.configService.getOrThrow(`APP_${appId}`));
+  getAppIds(): string[] {
+    return Object.keys(process.env)
+      .filter((env) => /APP_/.test(env))
+      .map((appId) => appId.split('APP_')[1]);
   }
 }
