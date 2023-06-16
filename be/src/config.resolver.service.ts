@@ -50,6 +50,12 @@ export class ConfigResolverService {
     return config ? JSON.parse(config).systemThresholds || null : null;
   }
 
+  getCronTime(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).cronTime || null : null;
+  }
+
   /*getEncryptionStatus(applicationId: string): boolean {
         applicationId = this.transform(applicationId);
         const config = this.configService.get<string>(applicationId);

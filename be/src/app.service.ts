@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import { UpdateConfigurationDto } from './dto/update-configuration.dto';
-import { ConfigService } from '@nestjs/config';
-import { AppConfig } from './api.interface';
 
 @Injectable()
 export class AppService {
   private configCache: object = {};
-
-  constructor(private readonly configService: ConfigService) {}
 
   getSystemStatus(
     applicationId: string,

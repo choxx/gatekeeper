@@ -9,7 +9,7 @@ import { TasksService } from './task.service';
 import { HttpModule } from '@nestjs/axios';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { GlobalService } from './global.service';
+import { LockService } from './lock.service';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { GlobalService } from './global.service';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    GlobalService,
+    LockService,
   ],
   exports: [AppService, ConfigResolverService],
 })
