@@ -51,6 +51,12 @@ export class TasksService implements OnModuleInit {
       return 'SKIPPED';
     }
 
+    const status = this.appService.getSystemStatus(appId);
+    if (status.cron.blocked) {
+      this.logger.warn(`CRON for app ${appId} skipped due to blocked`);
+      return 'SKIPPED';
+    }
+
     // acquire lock
     LockService.locks[appId] = true;
 
@@ -64,11 +70,6 @@ export class TasksService implements OnModuleInit {
     }
 
     const systemLoad = Math.round(Number(response.data.result[0].value[1]));
-    const status = this.appService.getSystemStatus(appId);
-    if (status.cron.blocked) {
-      this.logger.warn(`CRON for app ${appId} skipped due to blocked`);
-      return 'SKIPPED';
-    }
 
     const thresholds = this.configResolverService.getSystemThresholds(appId);
     const threshold = <ErrorDto | undefined>thresholds
