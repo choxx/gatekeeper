@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \\\"src/**/*.ts\\\" \\\"test/**/*.ts\\\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -21,11 +21,14 @@
     "test:e2e": "jest --config test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.3.3",
     "@nestjs/core": "^8.0.0",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/schedule": "^2.2.3",
+    "axios": "^1.4.0",
     "@nestjs/throttler": "^4.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -39,6 +42,7 @@
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
+    "@types/cron": "^2.0.1",
     "@types/express": "^4.17.17",
     "@types/jest": "27.5.0",
     "@types/node": "^16.0.0",

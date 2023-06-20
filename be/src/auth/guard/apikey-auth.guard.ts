@@ -1,5 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { ConfigResolverService } from "../../config.resolver.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigResolverService } from '../../config.resolver.service';
 
 @Injectable()
 export class ApiKeyAuthGuard implements CanActivate {

@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Headers, Ip, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Ip,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiKeyAuthGuard } from "./auth/guard/apikey-auth.guard";
-import { AdminSecretAuthGuard } from "./auth/guard/admin-secret-auth.guard";
-import { UpdateConfigurationDto } from "./dto/update-configuration.dto";
-import { Throttle } from "@nestjs/throttler";
+import { ApiKeyAuthGuard } from './auth/guard/apikey-auth.guard';
+import { AdminSecretAuthGuard } from './auth/guard/admin-secret-auth.guard';
+import { UpdateConfigurationDto } from './dto/update-configuration.dto';
+import { Throttle } from '@nestjs/throttler';
+import { LockInterceptor } from './interceptors/lock.interceptor';
 
 @Controller()
 @UseGuards(ApiKeyAuthGuard)
@@ -17,18 +27,17 @@ export class AppController {
   }
 
   @Get('/gatekeeper')
-  getSystemStatus(
-    @Headers('x-application-id') applicationId: string,
-  ): object {
+  getSystemStatus(@Headers('x-application-id') applicationId: string): object {
     return this.appService.getSystemStatus(applicationId);
   }
 
   @Post('/configuration')
   @Throttle(5, 60)
   @UseGuards(AdminSecretAuthGuard)
+  @UseInterceptors(LockInterceptor)
   updateConfiguration(
     @Headers('x-application-id') applicationId: string,
-    @Body() body: UpdateConfigurationDto
+    @Body() body: UpdateConfigurationDto,
   ): object {
     return this.appService.updateConfiguration(applicationId, body);
   }

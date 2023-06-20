@@ -1,44 +1,62 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { AppConfig } from "./api.interface";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from './api.interface';
 
 @Injectable()
 export class ConfigResolverService {
-    constructor(private configService: ConfigService) {
-    }
+  constructor(private configService: ConfigService) {}
 
-    transform(applicationId: string): string {
-        /**
-         * we'll replace "-" with "_" because docker-compose cannot load hyphens & we expect applicationId with underscore separator.
-         * Also, we'll prefix <APP_> as the uuid may begin with integer & variables can't begin with numbers.
-         */
-        return 'APP_' + applicationId.replace(/\./g, '_').split("-").join("_");
-    }
+  transform(applicationId: string): string {
+    /**
+     * we'll replace "-" with "_" because docker-compose cannot load hyphens & we expect applicationId with underscore separator.
+     * Also, we'll prefix <APP_> as the uuid may begin with integer & variables can't begin with numbers.
+     */
+    return 'APP_' + applicationId.replace(/\./g, '_').split('-').join('_');
+  }
 
-    getConfigByApplicationId(applicationId: string): AppConfig {
-        applicationId = this.transform(applicationId);
-        return this.configService.get<AppConfig>(applicationId);
-    }
+  getConfigByApplicationId(applicationId: string): AppConfig {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get(applicationId);
+    return JSON.parse(config);
+  }
 
-    getAppName(applicationId: string): string {
-        applicationId = this.transform(applicationId);
-        const config = this.configService.get<string>(applicationId);
-        return config ? JSON.parse(config).name || null : null;
-    }
+  getAppName(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).name || null : null;
+  }
 
-    getApiKey(applicationId: string): string {
-        applicationId = this.transform(applicationId);
-        const config = this.configService.get<string>(applicationId);
-        return config ? JSON.parse(config).apiKey || null : null;
-    }
+  getApiKey(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).apiKey || null : null;
+  }
 
-    getAdminSecret(applicationId: string): string {
-        applicationId = this.transform(applicationId);
-        const config = this.configService.get<string>(applicationId);
-        return config ? JSON.parse(config).adminSecret || null : null;
-    }
+  getAdminSecret(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).adminSecret || null : null;
+  }
 
-    /*getEncryptionStatus(applicationId: string): boolean {
+  getPrometheusUrl(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).prometheusUrl || null : null;
+  }
+
+  getSystemThresholds(applicationId: string): object[] {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).systemThresholds || null : null;
+  }
+
+  getCronTime(applicationId: string): string {
+    applicationId = this.transform(applicationId);
+    const config = this.configService.get<string>(applicationId);
+    return config ? JSON.parse(config).cronTime || null : null;
+  }
+
+  /*getEncryptionStatus(applicationId: string): boolean {
         applicationId = this.transform(applicationId);
         const config = this.configService.get<string>(applicationId);
         return JSON.parse(config).encryption.enabled || false;

@@ -1,5 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { ConfigResolverService } from "../../config.resolver.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigResolverService } from '../../config.resolver.service';
 
 @Injectable()
 export class AdminSecretAuthGuard implements CanActivate {
@@ -16,7 +21,9 @@ export class AdminSecretAuthGuard implements CanActivate {
       throw new UnauthorizedException('Missing Admin Secret.');
     }
 
-    if (xAdminSecret !== this.configResolverService.getAdminSecret(xApplicationId)) {
+    if (
+      xAdminSecret !== this.configResolverService.getAdminSecret(xApplicationId)
+    ) {
       throw new UnauthorizedException('Invalid Admin Secret.');
     }
     return true;
