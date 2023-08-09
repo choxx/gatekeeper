@@ -24,7 +24,7 @@ export class AppService {
     // if file doesn't exist, we'll create a default one assuming system in UP
     const dto: UpdateConfigurationDto = {
       cron: {
-        blocked: false,
+        blocked: true,  // defaults to blocked
       },
       system: {
         error: null,
