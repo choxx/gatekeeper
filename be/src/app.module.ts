@@ -5,7 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigResolverService } from './config.resolver.service';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksService } from './task.service';
+// import { TasksService } from './task.service';
 import { HttpModule } from '@nestjs/axios';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -26,7 +26,7 @@ import { LockService } from './lock.service';
   providers: [
     AppService,
     ConfigResolverService,
-    TasksService,
+    // TasksService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

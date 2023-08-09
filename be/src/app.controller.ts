@@ -6,14 +6,14 @@ import {
   Ip,
   Post,
   UseGuards,
-  UseInterceptors,
+  // UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiKeyAuthGuard } from './auth/guard/apikey-auth.guard';
 import { AdminSecretAuthGuard } from './auth/guard/admin-secret-auth.guard';
 import { UpdateConfigurationDto } from './dto/update-configuration.dto';
 import { Throttle } from '@nestjs/throttler';
-import { LockInterceptor } from './interceptors/lock.interceptor';
+// import { LockInterceptor } from './interceptors/lock.interceptor';
 
 @Controller()
 @UseGuards(ApiKeyAuthGuard)
@@ -34,7 +34,7 @@ export class AppController {
   @Post('/configuration')
   @Throttle(5, 60)
   @UseGuards(AdminSecretAuthGuard)
-  @UseInterceptors(LockInterceptor)
+  // @UseInterceptors(LockInterceptor)
   updateConfiguration(
     @Headers('x-application-id') applicationId: string,
     @Body() body: UpdateConfigurationDto,
